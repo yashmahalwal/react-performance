@@ -12,19 +12,6 @@ import {
   getKeyValue,
 } from "@nextui-org/react";
 import { Line } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-} from "chart.js";
-
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement);
-
-const options = {
-  animation: false,
-} as const;
 
 export function Unoptimised() {
   const [stockEventList, setStockEventList] = useState<StockEvent[]>([]);
@@ -105,7 +92,12 @@ export function Unoptimised() {
           </Button>
         </div>
         <section className="mt-6">
-          <Line options={options} data={chartData} />
+          <Line
+            options={{
+              animation: false,
+            }}
+            data={chartData}
+          />
         </section>
         <section className="mt-6">
           <Table
