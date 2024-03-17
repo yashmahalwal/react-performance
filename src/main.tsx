@@ -6,6 +6,7 @@ import { Root } from "./routes/root/root";
 import { Unoptimised } from "./routes/unoptimised/unoptimised";
 import { OptimiseCalculations } from "./routes/optimise-calculations/components/optimise-calculations";
 import { OptimiseUpdates } from "./routes/optimise-updates/components/optimise-updates";
+import { ReduceRenders } from "./routes/reduce-renders/reduce-renders";
 
 const router = createBrowserRouter([
   {
@@ -13,6 +14,7 @@ const router = createBrowserRouter([
     element: <Root />,
     children: [
       { path: "/", element: <Unoptimised /> },
+      { path: "/reduce-renders", element: <ReduceRenders /> },
       { path: "/optimise-calculations", element: <OptimiseCalculations /> },
       { path: "/optimise-updates", element: <OptimiseUpdates /> },
     ],
@@ -22,5 +24,5 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <NextUIProvider>
     <RouterProvider router={router} />
-  </NextUIProvider>
+  </NextUIProvider>,
 );

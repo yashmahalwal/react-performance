@@ -13,23 +13,30 @@ export type PageProfilerProps = {
   durationMs?: number;
 };
 
+type ProfileEvent = {
+  render: number;
+  commit: number;
+};
+
 type ProfiledData = {
-  averageDuration: number;
+  averageRenderDuration: number;
+  averageCommitDuation: number;
   count: number;
 };
 
-const defaultProfiledData = {
-  averageDuration: 0,
+const defaultProfiledData: ProfiledData = {
+  averageCommitDuation: 0,
+  averageRenderDuration: 0,
   count: 0,
 };
 
 export function PageProfiler({
   children,
-  durationMs = 3000,
+  durationMs = 1000,
 }: PropsWithChildren<PageProfilerProps>) {
   const [isProfiling, setIsProfiling] = useState(false);
   const timerRef = useRef<number | null>(null);
-  const renderDurations = useRef<number[]>([]);
+  const renderDurations = useRef<ProfileEvent[]>([]);
   const [profiledData, setProfiledData] =
     useState<ProfiledData>(defaultProfiledData);
 
@@ -47,12 +54,23 @@ export function PageProfiler({
     setIsProfiling(true);
     timerRef.current = setTimeout(() => {
       const count = renderDurations.current.length;
-      const averageDuration = count
-        ? renderDurations.current.reduce((prev, curr) => prev + curr, 0) / count
+      const averageRenderDuration = count
+        ? renderDurations.current.reduce(
+            (prev, curr) => prev + curr.render,
+            0,
+          ) / count
         : 0;
+      const averageCommitDuation = count
+        ? renderDurations.current.reduce(
+            (prev, curr) => prev + curr.commit,
+            0,
+          ) / count
+        : 0;
+
       setProfiledData({
         count,
-        averageDuration,
+        averageRenderDuration,
+        averageCommitDuation,
       });
       setIsProfiling(false);
       timerRef.current = null;
@@ -64,15 +82,18 @@ export function PageProfiler({
     () => () => {
       timerRef.current && clearTimeout(timerRef.current);
     },
-    []
+    [],
   );
 
   const onRender: ProfilerProps["onRender"] = useStableCallback(
-    (_, reason, duration) => {
-      if (reason === "update" && duration >= 5) {
-        renderDurations.current.push(duration);
+    (_, reason, render, __, commit) => {
+      if (isProfiling && reason === "update" && render >= 5) {
+        renderDurations.current.push({
+          render,
+          commit,
+        });
       }
-    }
+    },
   );
 
   return (
@@ -101,7 +122,11 @@ export function PageProfiler({
         </div>
         <p className="mt-2">
           <Code>
-            Average Duaration: {profiledData.averageDuration.toFixed(2)}ms
+            Average Render Duration:{" "}
+            {profiledData.averageRenderDuration.toFixed(2)}ms
+            <br />
+            Average Commit Duration:{" "}
+            {profiledData.averageCommitDuation.toFixed(2)}ms
             <br />
             Renders: {profiledData.count}
           </Code>
