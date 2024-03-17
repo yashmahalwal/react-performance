@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { StockEvent } from "../../utilities/stocks";
+import { StockEvent } from "../../../utilities/stocks";
 import { Line } from "react-chartjs-2";
 
 export type ChartProps = {

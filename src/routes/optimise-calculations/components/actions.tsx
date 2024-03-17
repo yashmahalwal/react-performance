@@ -1,7 +1,7 @@
 import { Button } from "@nextui-org/react";
-import { useMonitorStocks } from "../../hooks/use-monitor-stocks";
-import { StockEvent } from "../../utilities/stocks";
-import { useStableCallback } from "../../hooks/use-stable-callback";
+import { useMonitorStocks } from "../../../hooks/use-monitor-stocks";
+import { StockEvent } from "../../../utilities/stocks";
+import { useStableCallback } from "../../../hooks/use-stable-callback";
 
 export type ActionsProps = {
   onReset(): void;

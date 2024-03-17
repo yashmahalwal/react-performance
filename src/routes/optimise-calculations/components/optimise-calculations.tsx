@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
-import { StockEvent } from "../../utilities/stocks";
+import { StockEvent } from "../../../utilities/stocks";
 import { Actions, ActionsProps } from "./actions";
-import { useStableCallback } from "../../hooks/use-stable-callback";
+import { useStableCallback } from "../../../hooks/use-stable-callback";
 import { StockTable } from "./StockTable";
 import { Chart } from "./chart";
 

@@ -1,5 +1,5 @@
 import { forwardRef } from "react";
-import { StockEvent } from "../../utilities/stocks";
+import { StockEvent } from "../../../utilities/stocks";
 import {
   TableHeader,
   TableColumn,

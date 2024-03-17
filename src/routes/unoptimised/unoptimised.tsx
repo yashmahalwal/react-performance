@@ -103,7 +103,7 @@ export function Unoptimised() {
           <Table
             ref={tableRef}
             aria-label="Example table with dynamic content"
-            className="w-screen-sm h-96"
+            className="w-screen-sm h-96 [&>div]:flex-1"
             isHeaderSticky
           >
             <TableHeader columns={tableColumns}>
