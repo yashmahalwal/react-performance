@@ -15,6 +15,8 @@ module.exports = {
       { allowConstantExport: true },
     ],
     "unused-imports/no-unused-imports": "error",
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "error",
     // note you must disable the base rule
     // as it can report incorrect errors
     "@typescript-eslint/no-unused-vars": [

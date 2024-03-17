@@ -7,6 +7,7 @@ import { Unoptimised } from "./routes/unoptimised/unoptimised";
 import { OptimiseCalculations } from "./routes/optimise-calculations/components/optimise-calculations";
 import { OptimiseUpdates } from "./routes/optimise-updates/components/optimise-updates";
 import { ReduceRenders } from "./routes/reduce-renders/reduce-renders";
+import { AddMemo } from "./routes/add-memo/add-memo";
 
 const router = createBrowserRouter([
   {
@@ -14,6 +15,7 @@ const router = createBrowserRouter([
     element: <Root />,
     children: [
       { path: "/", element: <Unoptimised /> },
+      { path: "/add-memo", element: <AddMemo /> },
       { path: "/reduce-renders", element: <ReduceRenders /> },
       { path: "/optimise-calculations", element: <OptimiseCalculations /> },
       { path: "/optimise-updates", element: <OptimiseUpdates /> },

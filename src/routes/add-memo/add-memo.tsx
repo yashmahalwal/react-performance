@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { StockEvent } from "../../utilities/stocks";
 import { useMonitorStocks } from "../../hooks/use-monitor-stocks";
 import {
@@ -12,6 +12,7 @@ import {
   getKeyValue,
 } from "@nextui-org/react";
 import { Line } from "react-chartjs-2";
+import { useStableCallback } from "../../hooks/use-stable-callback";
 
 const tableColumns = [
   {
@@ -24,39 +25,34 @@ const tableColumns = [
   },
 ];
 
-export function ReduceRenders() {
+export function AddMemo() {
   const [stockEventList, setStockEventList] = useState<StockEvent[]>([]);
   const [averagePrices, setAveragePrices] = useState<number[]>([]);
   const tableRef = useRef<HTMLDivElement>(null);
 
   const { observe, unobserve, isWatching } = useMonitorStocks((event) => {
     setStockEventList((old) => [...old, event]);
+    const newTotal =
+      stockEventList.reduce((old, current) => old + current.price, 0) +
+      event.price;
+    const newAverage = newTotal / (stockEventList.length + 1);
+    setAveragePrices((old) => [...old, newAverage]);
+
+    const scrollContainer = tableRef.current?.parentElement;
+    scrollContainer?.scrollTo({
+      top: scrollContainer.scrollHeight,
+      behavior: "smooth",
+    });
   });
 
-  useEffect(() => {
-    if (stockEventList.length) {
-      const event = stockEventList.at(-1)!;
-      const newTotal =
-        stockEventList.reduce((old, current) => old + current.price, 0) +
-        event.price;
-      const newAverage = newTotal / (stockEventList.length + 1);
-      setAveragePrices((old) => [...old, newAverage]);
-
-      const scrollContainer = tableRef.current?.parentElement;
-      scrollContainer?.scrollTo({
-        top: scrollContainer.scrollHeight,
-        behavior: "smooth",
-      });
-    }
-  }, [stockEventList]);
-
-  const handleReset = () => {
+  const handleReset = useStableCallback(() => {
     setStockEventList([]);
     setAveragePrices([]);
-  };
-  const handleWatchToggle = () => {
+  });
+
+  const handleWatchToggle = useStableCallback(() => {
     isWatching ? unobserve() : observe();
-  };
+  });
 
   const chart = useMemo(() => {
     const last50Prices = averagePrices.slice(-50);
