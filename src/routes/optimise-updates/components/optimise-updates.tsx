@@ -1,5 +1,5 @@
 import { Actions } from "./actions";
-import { StockTable } from "./StockTable";
+import { StockTable } from "./stock-table";
 import { Chart } from "./chart";
 
 export function OptimiseUpdates() {

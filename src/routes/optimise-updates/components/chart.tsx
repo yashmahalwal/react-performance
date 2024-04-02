@@ -1,13 +1,13 @@
 import { Line } from "react-chartjs-2";
-import { useStockStore } from "../store/stock-store";
 import { selectAveragePrices } from "../store/stock-store-selectors";
+import { useThrottledStore } from "../hooks/use-throttled-store";
 
 const options = {
   animation: false,
 } as const;
 
 export function Chart() {
-  const averagePrices = useStockStore(selectAveragePrices);
+  const averagePrices = useThrottledStore(selectAveragePrices);
 
   const config = {
     labels: averagePrices.map((e) => e.label),

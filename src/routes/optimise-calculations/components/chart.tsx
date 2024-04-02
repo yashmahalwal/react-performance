@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { memo, useRef } from "react";
 import { StockEvent } from "../../../utilities/stocks";
 import { Line } from "react-chartjs-2";
 
@@ -12,7 +12,7 @@ const options = {
 
 const batchSize = 50;
 
-export function Chart({ list }: ChartProps) {
+export const Chart = memo(({ list }: ChartProps) => {
   const averagePrices = useRef<{ value: number; label: number }[]>([]);
   const oldItemsSize = useRef(list.length);
 
@@ -56,4 +56,4 @@ export function Chart({ list }: ChartProps) {
   };
 
   return <Line options={options} data={config} />;
-}
+});

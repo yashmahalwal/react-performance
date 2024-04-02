@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { StockEvent } from "../../../utilities/stocks";
 import { Actions, ActionsProps } from "./actions";
 import { useStableCallback } from "../../../hooks/use-stable-callback";
-import { StockTable } from "./StockTable";
+import { StockTable } from "./stock-table";
 import { Chart } from "./chart";
 
 export function OptimiseCalculations() {
@@ -26,9 +26,7 @@ export function OptimiseCalculations() {
 
   return (
     <>
-      <h1 className="text-xl text-center">
-        Step 1: Refactor components and calculations
-      </h1>
+      <h1 className="text-xl text-center">Optimise average calculation</h1>
       <article className="flex flex-col align-middle mt-4">
         <Actions onReset={onReset} onStockEvent={onStockEvent} />
         <section className="mt-6">

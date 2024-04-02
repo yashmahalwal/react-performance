@@ -47,57 +47,57 @@ export function PageProfiler({
   });
 
   const handleProfilingButtonClick = useStableCallback(() => {
-    if (timerRef.current) {
-      return;
-    }
-
-    setIsProfiling(true);
-    timerRef.current = setTimeout(() => {
-      const count = renderDurations.current.length;
-      const averageRenderDuration = count
-        ? renderDurations.current.reduce(
-            (prev, curr) => prev + curr.render,
-            0,
-          ) / count
-        : 0;
-      const averageCommitDuation = count
-        ? renderDurations.current.reduce(
-            (prev, curr) => prev + curr.commit,
-            0,
-          ) / count
-        : 0;
-
-      setProfiledData({
-        count,
-        averageRenderDuration,
-        averageCommitDuation,
-      });
+    if (isProfiling) {
+      timerRef.current && clearInterval(timerRef.current);
       setIsProfiling(false);
       timerRef.current = null;
-      renderDurations.current = [];
-    }, durationMs);
+    } else {
+      setIsProfiling(true);
+      timerRef.current = setInterval(() => {
+        const count = renderDurations.current.length;
+        const averageRenderDuration = count
+          ? renderDurations.current.reduce(
+              (prev, curr) => prev + curr.render,
+              0
+            ) / count
+          : 0;
+        const averageCommitDuation = count
+          ? renderDurations.current.reduce(
+              (prev, curr) => prev + curr.commit,
+              0
+            ) / count
+          : 0;
+
+        setProfiledData({
+          count,
+          averageRenderDuration,
+          averageCommitDuation,
+        });
+        renderDurations.current = [];
+      }, durationMs);
+    }
   });
 
   useEffect(
     () => () => {
-      timerRef.current && clearTimeout(timerRef.current);
+      timerRef.current && clearInterval(timerRef.current);
     },
-    [],
+    []
   );
 
   const onRender: ProfilerProps["onRender"] = useStableCallback(
-    (_, reason, render, __, commit) => {
+    (_, reason, render, __, updateStart, updateEnd) => {
       if (isProfiling && reason === "update" && render >= 5) {
         renderDurations.current.push({
           render,
-          commit,
+          commit: updateEnd - updateStart - render,
         });
       }
-    },
+    }
   );
 
   return (
-    <article>
+    <article className="py-6">
       <Profiler id="Content" onRender={onRender}>
         {children}
       </Profiler>
@@ -107,9 +107,8 @@ export function PageProfiler({
             variant="flat"
             color="primary"
             onClick={handleProfilingButtonClick}
-            isLoading={isProfiling}
           >
-            {isProfiling ? "Profiling" : "Start Profiling"}
+            {isProfiling ? "Stop Profiling" : "Start Profiling"}
           </Button>
           <Button
             variant="light"

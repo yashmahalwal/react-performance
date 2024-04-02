@@ -1,4 +1,4 @@
-import { forwardRef } from "react";
+import { forwardRef, memo } from "react";
 import { StockEvent } from "../../../utilities/stocks";
 import {
   TableHeader,
@@ -25,13 +25,13 @@ export type TableProps = {
   list: StockEvent[];
 };
 
-export const StockTable = forwardRef<HTMLTableElement, TableProps>(
-  ({ list }, ref) => {
+export const StockTable = memo(
+  forwardRef<HTMLTableElement, TableProps>(({ list }, ref) => {
     return (
       <Table
         ref={ref}
         aria-label="Example table with dynamic content"
-        className="w-screen-sm h-96"
+        className="w-screen-sm h-96 [&>div]:flex-1"
         isHeaderSticky
       >
         <TableHeader columns={tableColumns}>
@@ -50,5 +50,5 @@ export const StockTable = forwardRef<HTMLTableElement, TableProps>(
         </TableBody>
       </Table>
     );
-  }
+  })
 );
