@@ -8,7 +8,7 @@ import { OptimiseCalculations } from "./routes/optimise-calculations/components/
 import { OptimiseUpdates } from "./routes/optimise-updates/components/optimise-updates";
 import { ReduceRenders } from "./routes/reduce-renders/reduce-renders";
 import { AddMemo } from "./routes/add-memo/add-memo";
-import { OptimiseMemory } from "./routes/optimise-memory/components/optimise-updates";
+import { OptimiseMemory } from "./routes/optimise-memory/components/optimise-memory";
 
 const router = createBrowserRouter([
   {

@@ -119,7 +119,9 @@ export function ReduceRenders() {
 
   return (
     <>
-      <h1 className="text-xl text-center">Adding Memoization for children</h1>
+      <h1 className="text-xl text-center">
+        Reducing Renders from Side Effects
+      </h1>
       <article className="flex flex-col align-middle mt-4">
         <div className="flex gap-2 justify-center">
           <Button color="primary" variant="solid" onClick={handleWatchToggle}>

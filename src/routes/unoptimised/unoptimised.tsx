@@ -79,9 +79,7 @@ export function Unoptimised() {
 
   return (
     <>
-      <h1 className="text-xl text-center">
-        Welcome to Unoptimised Stock Monitoring
-      </h1>
+      <h1 className="text-xl text-center">Unoptimised Stock Monitoring</h1>
       <article className="flex flex-col align-middle mt-4">
         <div className="flex gap-2 justify-center">
           <Button color="primary" variant="solid" onClick={handleWatchToggle}>

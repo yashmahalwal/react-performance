@@ -26,7 +26,7 @@ export function OptimiseCalculations() {
 
   return (
     <>
-      <h1 className="text-xl text-center">Optimise average calculation</h1>
+      <h1 className="text-xl text-center">Optimise Average Window Calculation</h1>
       <article className="flex flex-col align-middle mt-4">
         <Actions onReset={onReset} onStockEvent={onStockEvent} />
         <section className="mt-6">

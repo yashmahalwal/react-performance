@@ -104,11 +104,11 @@ export function PageProfiler({
   );
 
   return (
-    <article className="py-6">
+    <article>
       <Profiler id="Content" onRender={onRender}>
         {children}
       </Profiler>
-      <footer className="mt-6">
+      <footer className="py-6">
         <div className="flex align-middle gap-2">
           <Button
             variant="flat"
@@ -126,7 +126,7 @@ export function PageProfiler({
             Reset Profiling Data
           </Button>
         </div>
-        <p className="mt-2">
+        <p className="mt-4">
           <Code>
             Average Render Duration:{" "}
             {profiledData.averageRenderDuration.toFixed(2)}ms
