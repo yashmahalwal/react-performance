@@ -8,6 +8,7 @@ import {
 } from "react";
 import { Button, Code } from "@nextui-org/react";
 import { useStableCallback } from "../hooks/use-stable-callback";
+import { useMatch } from "react-router-dom";
 
 export type PageProfilerProps = {
   durationMs?: number;
@@ -85,9 +86,15 @@ export function PageProfiler({
     []
   );
 
+  const isOptimisedPath = useMatch("/optimise-memory");
+
   const onRender: ProfilerProps["onRender"] = useStableCallback(
     (_, reason, render, __, updateStart, updateEnd) => {
-      if (isProfiling && reason === "update" && render >= 5) {
+      if (
+        isProfiling &&
+        reason === "update" &&
+        render >= (isOptimisedPath ? 0 : 5)
+      ) {
         renderDurations.current.push({
           render,
           commit: updateEnd - updateStart - render,

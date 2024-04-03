@@ -8,6 +8,7 @@ import { OptimiseCalculations } from "./routes/optimise-calculations/components/
 import { OptimiseUpdates } from "./routes/optimise-updates/components/optimise-updates";
 import { ReduceRenders } from "./routes/reduce-renders/reduce-renders";
 import { AddMemo } from "./routes/add-memo/add-memo";
+import { OptimiseMemory } from "./routes/optimise-memory/components/optimise-updates";
 
 const router = createBrowserRouter([
   {
@@ -19,6 +20,7 @@ const router = createBrowserRouter([
       { path: "/reduce-renders", element: <ReduceRenders /> },
       { path: "/optimise-calculations", element: <OptimiseCalculations /> },
       { path: "/optimise-updates", element: <OptimiseUpdates /> },
+      { path: "/optimise-memory", element: <OptimiseMemory /> },
     ],
   },
 ]);
@@ -26,5 +28,5 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <NextUIProvider>
     <RouterProvider router={router} />
-  </NextUIProvider>,
+  </NextUIProvider>
 );
