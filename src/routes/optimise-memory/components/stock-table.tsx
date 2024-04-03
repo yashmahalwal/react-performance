@@ -1,7 +1,12 @@
 import { memo, useCallback } from "react";
 import { selectIds, selectStockEvent } from "../store/stock-store-selectors";
 import { useThrottledStore } from "../hooks/use-throttled-store";
-import { TableVirtuoso, TableVirtuosoProps } from "react-virtuoso";
+import {
+  ComputeItemKey,
+  ItemContent,
+  TableVirtuoso,
+  TableVirtuosoProps,
+} from "react-virtuoso";
 import { StockEvent } from "../../../utilities/stocks";
 import { useStockStore } from "../store/stock-store";
 
@@ -24,7 +29,7 @@ const StockTableRow = ({ id }: StockTableRowProps) => {
   );
 };
 
-const components: TableVirtuosoProps<string, null>["components"] = {
+const components: TableVirtuosoProps<StockEvent["id"], null>["components"] = {
   EmptyPlaceholder: () => (
     <div className="w-full h-full flex justify-center items-center">
       <p>No data to display</p>
@@ -35,15 +40,17 @@ const components: TableVirtuosoProps<string, null>["components"] = {
 export const StockTable = memo(() => {
   const throttledList = useThrottledStore(selectIds, 1000);
 
-  const renderItem: TableVirtuosoProps<StockEvent["id"], null>["itemContent"] =
-    useCallback((_, id) => {
+  const renderItem: ItemContent<StockEvent["id"], null> = useCallback(
+    (_, id) => {
       return <StockTableRow id={id} />;
-    }, []);
+    },
+    []
+  );
 
-  const keyExtractor: TableVirtuosoProps<
-    StockEvent["id"],
-    null
-  >["computeItemKey"] = useCallback((_, id) => id, []);
+  const keyExtractor: ComputeItemKey<StockEvent["id"], null> = useCallback(
+    (_, id) => id,
+    []
+  );
 
   const tableHeader = useCallback(() => {
     return (
