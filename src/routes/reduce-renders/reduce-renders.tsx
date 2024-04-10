@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { StockEvent } from "../../utilities/stocks";
 import { useMonitorStocks } from "../../hooks/use-monitor-stocks";
 import {
@@ -12,7 +12,9 @@ import {
   getKeyValue,
 } from "@nextui-org/react";
 import { Line } from "react-chartjs-2";
+import { useStableCallback } from "../../hooks/use-stable-callback";
 
+// Columns for the table
 const tableColumns = [
   {
     key: "name",
@@ -24,39 +26,48 @@ const tableColumns = [
   },
 ];
 
+// Options for the line chart
+const options = {
+  animation: false,
+} as const;
+
+/**
+ * Component for reducing renders from side effects.
+ * @returns JSX element
+ */
 export function ReduceRenders() {
+  // State to store list of stock events
   const [stockEventList, setStockEventList] = useState<StockEvent[]>([]);
+  // State to store list of average prices
   const [averagePrices, setAveragePrices] = useState<number[]>([]);
+  // Reference for the table element
   const tableRef = useRef<HTMLDivElement>(null);
 
+  // Custom hook to monitor stocks
   const { observe, unobserve, isWatching } = useMonitorStocks((event) => {
+    // Add new stock event to the list
     setStockEventList((old) => [...old, event]);
+    const newTotal =
+      stockEventList.reduce((old, current) => old + current.price, 0) +
+      event.price;
+    const newAverage = newTotal / (stockEventList.length + 1);
+    setAveragePrices((old) => [...old, newAverage]);
+
+    const scrollContainer = tableRef.current?.parentElement;
+    scrollContainer?.scrollTo({
+      top: scrollContainer.scrollHeight,
+      behavior: "smooth",
+    });
   });
 
-  useEffect(() => {
-    if (stockEventList.length) {
-      const event = stockEventList.at(-1)!;
-      const newTotal =
-        stockEventList.reduce((old, current) => old + current.price, 0) +
-        event.price;
-      const newAverage = newTotal / (stockEventList.length + 1);
-      setAveragePrices((old) => [...old, newAverage]);
-
-      const scrollContainer = tableRef.current?.parentElement;
-      scrollContainer?.scrollTo({
-        top: scrollContainer.scrollHeight,
-        behavior: "smooth",
-      });
-    }
-  }, [stockEventList]);
-
-  const handleReset = () => {
+  const handleReset = useStableCallback(() => {
     setStockEventList([]);
     setAveragePrices([]);
-  };
-  const handleWatchToggle = () => {
+  });
+
+  const handleWatchToggle = useStableCallback(() => {
     isWatching ? unobserve() : observe();
-  };
+  });
 
   const chart = useMemo(() => {
     const last50Prices = averagePrices.slice(-50);
@@ -78,14 +89,7 @@ export function ReduceRenders() {
       ],
     };
 
-    return (
-      <Line
-        options={{
-          animation: false,
-        }}
-        data={chartData}
-      />
-    );
+    return <Line options={options} data={chartData} />;
   }, [averagePrices]);
 
   const table = useMemo(() => {
@@ -120,7 +124,7 @@ export function ReduceRenders() {
   return (
     <>
       <h1 className="text-xl text-center">
-        Reducing Renders from Side Effects
+        Reducing Renders due to Side Effects
       </h1>
       <article className="flex flex-col align-middle mt-4">
         <div className="flex gap-2 justify-center">

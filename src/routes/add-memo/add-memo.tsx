@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { StockEvent } from "../../utilities/stocks";
 import { useMonitorStocks } from "../../hooks/use-monitor-stocks";
 import {
@@ -12,8 +12,8 @@ import {
   getKeyValue,
 } from "@nextui-org/react";
 import { Line } from "react-chartjs-2";
-import { useStableCallback } from "../../hooks/use-stable-callback";
 
+// Columns for the table
 const tableColumns = [
   {
     key: "name",
@@ -24,36 +24,61 @@ const tableColumns = [
     label: "PRICE",
   },
 ];
+// problem generating documentation
+// Options for the line chart
+const options = {
+  animation: false,
+} as const;
 
+/**
+ * Adding memoization for children.
+ * @returns JSX element
+ */
 export function AddMemo() {
+  // State to store list of stock events
   const [stockEventList, setStockEventList] = useState<StockEvent[]>([]);
+  // State to store list of average prices
   const [averagePrices, setAveragePrices] = useState<number[]>([]);
   const tableRef = useRef<HTMLDivElement>(null);
 
+  // Custom hook to monitor stocks
   const { observe, unobserve, isWatching } = useMonitorStocks((event) => {
+    // Add new stock event to the list
     setStockEventList((old) => [...old, event]);
-    const newTotal =
-      stockEventList.reduce((old, current) => old + current.price, 0) +
-      event.price;
-    const newAverage = newTotal / (stockEventList.length + 1);
-    setAveragePrices((old) => [...old, newAverage]);
-
-    const scrollContainer = tableRef.current?.parentElement;
-    scrollContainer?.scrollTo({
-      top: scrollContainer.scrollHeight,
-      behavior: "smooth",
-    });
   });
 
-  const handleReset = useStableCallback(() => {
+  // Effect to calculate average prices and scroll to bottom of table
+  useEffect(() => {
+    if (stockEventList.length) {
+      // Calculate new average price
+      const event = stockEventList.at(-1)!;
+      const newTotal =
+        stockEventList.reduce((old, current) => old + current.price, 0) +
+        event.price;
+      const newAverage = newTotal / (stockEventList.length + 1);
+      setAveragePrices((old) => [...old, newAverage]);
+
+      // Scroll to bottom of table
+      const scrollContainer = tableRef.current?.parentElement;
+      scrollContainer?.scrollTo({
+        top: scrollContainer.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+  }, [stockEventList]);
+
+  // Handler to reset stock event list and average prices
+  const handleReset = () => {
     setStockEventList([]);
     setAveragePrices([]);
-  });
+  };
 
-  const handleWatchToggle = useStableCallback(() => {
+  // Handler to toggle stock monitoring
+  const handleWatchToggle = () => {
     isWatching ? unobserve() : observe();
-  });
+  };
 
+  // Memoized chart component
   const chart = useMemo(() => {
     const last50Prices = averagePrices.slice(-50);
     const labels = last50Prices.map(
@@ -74,16 +99,10 @@ export function AddMemo() {
       ],
     };
 
-    return (
-      <Line
-        options={{
-          animation: false,
-        }}
-        data={chartData}
-      />
-    );
+    return <Line options={options} data={chartData} />;
   }, [averagePrices]);
 
+  // Memoized table component
   const table = useMemo(() => {
     return (
       <Table
@@ -115,12 +134,14 @@ export function AddMemo() {
 
   return (
     <>
-      <h1 className="text-xl text-center">Adding Memoization for children</h1>
+      <h1 className="text-xl text-center">Adding Memoization to Children</h1>
       <article className="flex flex-col align-middle mt-4">
         <div className="flex gap-2 justify-center">
+          {/* Button to toggle stock monitoring */}
           <Button color="primary" variant="solid" onClick={handleWatchToggle}>
             {isWatching ? "Unobserve" : "Observe"}
           </Button>
+          {/* Button to reset stock event list */}
           <Button color="primary" variant="bordered" onClick={handleReset}>
             Reset
           </Button>
