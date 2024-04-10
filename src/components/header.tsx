@@ -18,8 +18,8 @@ type MenuItem = {
 
 const menuItems: MenuItem[] = [
   { id: "unoptimised", label: "Unoptimised", href: "/" },
-  { id: "reduce-renders", label: "Reduce Renders", href: "/reduce-renders" },
   { id: "add-memo", label: "Add Memo", href: "/add-memo" },
+  { id: "reduce-renders", label: "Reduce Renders", href: "/reduce-renders" },
   {
     id: "optimise-calculations",
     label: "Optimise Calculations",
