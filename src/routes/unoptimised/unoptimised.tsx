@@ -27,7 +27,7 @@ export function Unoptimised() {
 
   // Custom hook to monitor stocks
   const { observe, unobserve, isWatching } = useMonitorStocks((event) => {
-    // Add new stock event to the list
+    // Add new stock event to the listlo
     setStockEventList((old) => [...old, event]);
   });
 

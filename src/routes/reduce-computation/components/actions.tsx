@@ -8,9 +8,15 @@ export type ActionsProps = {
   onStockEvent(event: StockEvent): void;
 };
 
+/**
+ * Component representing actions for monitoring stocks.
+ * @param props - Props containing functions to handle stock events and reset.
+ */
 export function Actions({ onStockEvent, onReset }: ActionsProps) {
+   // Custom hook to monitor stocks
   const { observe, unobserve, isWatching } = useMonitorStocks(onStockEvent);
 
+    // Callback function to toggle watch status
   const handleWatchToggle = useStableCallback(() => {
     if (!isWatching) {
       observe();

@@ -21,9 +21,9 @@ const menuItems: MenuItem[] = [
   { id: "add-memo", label: "Add Memo", href: "/add-memo" },
   { id: "reduce-renders", label: "Reduce Renders", href: "/reduce-renders" },
   {
-    id: "optimise-calculations",
-    label: "Optimise Calculations",
-    href: "/optimise-calculations",
+    id: "reduce-computation",
+    label: "Reduce Computation",
+    href: "/reduce-computation",
   },
   {
     id: "optimise-updates",

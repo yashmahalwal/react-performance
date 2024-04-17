@@ -2,6 +2,7 @@ import {
   Profiler,
   ProfilerProps,
   PropsWithChildren,
+  memo,
   useEffect,
   useMemo,
   useRef,
@@ -9,7 +10,6 @@ import {
 } from "react";
 import { Button, Code } from "@nextui-org/react";
 import { useStableCallback } from "../hooks/use-stable-callback";
-import { useMatch } from "react-router-dom";
 import { Line } from "react-chartjs-2";
 
 type ProfileEvent = {
@@ -102,6 +102,15 @@ function ProfilePlot({ list }: ProfilePlotProps) {
   );
 }
 
+type MemoizedProfilerProps = ProfilerProps;
+
+const MemoizedProfiler = memo(
+  (props: PropsWithChildren<MemoizedProfilerProps>) => {
+    return <Profiler {...props} />;
+  }
+);
+MemoizedProfiler.displayName = "MemoizedProfiler";
+
 export type PageProfilerProps = {
   durationMs?: number;
 };
@@ -121,7 +130,6 @@ export function PageProfiler({
     useState<ProfiledData>(defaultProfiledData);
 
   const handleReset = useStableCallback(() => {
-    console.log("Reset");
     timerRef.current = null;
     renderDurations.current = [];
     profiledDataListRef.current = [];
@@ -176,15 +184,9 @@ export function PageProfiler({
     []
   );
 
-  const isOptimisedPath = useMatch("/optimise-memory");
-
   const onRender: ProfilerProps["onRender"] = useStableCallback(
     (_, reason, render, __, updateStart, updateEnd) => {
-      if (
-        isProfiling &&
-        reason === "update" &&
-        render >= (isOptimisedPath ? 0 : 5)
-      ) {
+      if (isProfiling && reason === "update") {
         renderDurations.current.push({
           render,
           commit: updateEnd - updateStart - render,
@@ -195,9 +197,9 @@ export function PageProfiler({
 
   return (
     <article>
-      <Profiler id="Content" onRender={onRender}>
+      <MemoizedProfiler id="Content" onRender={onRender}>
         {children}
-      </Profiler>
+      </MemoizedProfiler>
       <footer className="py-6">
         <div className="flex align-middle gap-2">
           <Button
@@ -225,9 +227,9 @@ export function PageProfiler({
             Renders: {profiledData.count}
           </Code>
         </p>
-        <p className="pt-2">
+        <div className="pt-2">
           <ProfilePlot list={profiledDataState} />
-        </p>
+        </div>
       </footer>
     </article>
   );

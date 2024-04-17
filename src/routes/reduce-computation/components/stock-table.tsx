@@ -1,6 +1,4 @@
 import { memo, useCallback } from "react";
-import { selectIds, selectStockEvent } from "../store/stock-store-selectors";
-import { useThrottledStore } from "../hooks/use-throttled-store";
 import {
   ComputeItemKey,
   ItemContent,
@@ -8,19 +6,16 @@ import {
   TableVirtuosoProps,
 } from "react-virtuoso";
 import { StockEvent } from "../../../utilities/stocks";
-import { useStockStore } from "../store/stock-store";
 
 type StockTableRowProps = {
-  id: StockEvent["id"];
+  stock: StockEvent;
 };
 
-const StockTableRow = ({ id }: StockTableRowProps) => {
-  const stock = useStockStore((store) => selectStockEvent(store, id));
-
-  if (!stock) {
-    return <div className="h-px"></div>;
-  }
-
+/**
+ * Component representing a single row in the stock table.
+ * @param props - Props containing stock data.
+ */
+const StockTableRow = ({ stock }: StockTableRowProps) => {
   return (
     <tr className="w-full flex py-2">
       <td className="flex-1 flex items-center justify-center">{stock.name}</td>
@@ -29,7 +24,7 @@ const StockTableRow = ({ id }: StockTableRowProps) => {
   );
 };
 
-const components: TableVirtuosoProps<StockEvent["id"], null>["components"] = {
+const components: TableVirtuosoProps<StockEvent, null>["components"] = {
   EmptyPlaceholder: () => (
     <div className="w-full h-full flex justify-center items-center">
       <p>No data to display</p>
@@ -37,21 +32,32 @@ const components: TableVirtuosoProps<StockEvent["id"], null>["components"] = {
   ),
 };
 
-export const StockTable = memo(() => {
-  const throttledList = useThrottledStore(selectIds, 1000);
+export type StockTableProps = {
+  list: StockEvent[];
+};
 
-  const renderItem: ItemContent<StockEvent["id"], null> = useCallback(
-    (_, id) => {
-      return <StockTableRow id={id} />;
-    },
+/**
+ * Component representing a virtualized stock table.
+ * @param props - Props containing stock data.
+ */
+export const StockTable = memo(({ list }: StockTableProps) => {
+  /**
+   * Callback function to render each stock item in the table.
+   * @param index - Index of the item.
+   * @param stock - Stock data.
+   */
+  const renderItem: ItemContent<StockEvent, null> = useCallback((_, stock) => {
+    return <StockTableRow stock={stock} />;
+  }, []);
+
+  const keyExtractor: ComputeItemKey<StockEvent, null> = useCallback(
+    (_, stock) => stock.id,
     []
   );
 
-  const keyExtractor: ComputeItemKey<StockEvent["id"], null> = useCallback(
-    (_, id) => id,
-    []
-  );
-
+  /**
+   * Function to render the table header.
+   */
   const tableHeader = useCallback(() => {
     return (
       <tr className="w-full flex py-2 bg-white drop-shadow-md">
@@ -65,7 +71,7 @@ export const StockTable = memo(() => {
     <div className="border-2 rounded">
       <TableVirtuoso
         className="!h-96 [&_table]:w-full [&_table]:h-full"
-        data={throttledList}
+        data={list}
         itemContent={renderItem}
         computeItemKey={keyExtractor}
         fixedHeaderContent={tableHeader}

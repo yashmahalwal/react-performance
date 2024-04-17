@@ -50,9 +50,10 @@ export function ReduceRenders() {
     const newTotal =
       stockEventList.reduce((old, current) => old + current.price, 0) +
       event.price;
+    // Calculate the running average
     const newAverage = newTotal / (stockEventList.length + 1);
     setAveragePrices((old) => [...old, newAverage]);
-
+    // Scroll table to the end
     const scrollContainer = tableRef.current?.parentElement;
     scrollContainer?.scrollTo({
       top: scrollContainer.scrollHeight,
@@ -60,15 +61,18 @@ export function ReduceRenders() {
     });
   });
 
+  // Memoized callback for resetting stock event list and average prices
   const handleReset = useStableCallback(() => {
     setStockEventList([]);
     setAveragePrices([]);
   });
 
+  // Memoized callback for toggling stock monitoring
   const handleWatchToggle = useStableCallback(() => {
     isWatching ? unobserve() : observe();
   });
 
+  // Memoized chart component
   const chart = useMemo(() => {
     const last50Prices = averagePrices.slice(-50);
     const labels = last50Prices.map(
@@ -92,6 +96,7 @@ export function ReduceRenders() {
     return <Line options={options} data={chartData} />;
   }, [averagePrices]);
 
+  // Memoized table component
   const table = useMemo(() => {
     return (
       <Table
@@ -128,9 +133,11 @@ export function ReduceRenders() {
       </h1>
       <article className="flex flex-col align-middle mt-4">
         <div className="flex gap-2 justify-center">
+          {/* Button to toggle stock monitoring */}
           <Button color="primary" variant="solid" onClick={handleWatchToggle}>
             {isWatching ? "Unobserve" : "Observe"}
           </Button>
+          {/* Button to reset stock event list */}
           <Button color="primary" variant="bordered" onClick={handleReset}>
             Reset
           </Button>

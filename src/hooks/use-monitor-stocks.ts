@@ -2,6 +2,8 @@ import { useCallback, useRef, useState } from "react";
 import { StockEvent, generateRandomStockEvent } from "../utilities/stocks";
 import { useStableCallback } from "./use-stable-callback";
 
+const eventIntervalMs = 200;
+
 export function useMonitorStocks(observer: (event: StockEvent) => void) {
   const [isWatching, setIsWatching] = useState(false);
 
@@ -22,7 +24,7 @@ export function useMonitorStocks(observer: (event: StockEvent) => void) {
     timer.current = setInterval(() => {
       setIsWatching(true);
       callback(generateRandomStockEvent());
-    }, 50);
+    }, eventIntervalMs);
   }, [callback, unobserve]);
 
   return { observe, unobserve, isWatching };

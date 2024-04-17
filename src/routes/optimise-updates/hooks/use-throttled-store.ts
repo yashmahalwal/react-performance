@@ -3,7 +3,10 @@ import { StockStoreType, useStockStore } from "../store/stock-store";
 import throttle from "lodash.throttle";
 import { useStableCallback } from "../../../hooks/use-stable-callback";
 
-export function useThrottledStore<T>(selector: (store: StockStoreType) => T) {
+export function useThrottledStore<T>(
+  selector: (store: StockStoreType) => T,
+  throttleInterval = 600
+) {
   const [state, setState] = useState(() => {
     return selector(useStockStore.getState());
   });
@@ -12,8 +15,8 @@ export function useThrottledStore<T>(selector: (store: StockStoreType) => T) {
     () =>
       throttle((store: StockStoreType) => {
         setState(stableSelector(store));
-      }, 500),
-    [stableSelector]
+      }, throttleInterval),
+    [stableSelector, throttleInterval]
   );
   useEffect(() => {
     return useStockStore.subscribe(update);
