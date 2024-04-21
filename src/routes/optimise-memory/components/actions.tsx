@@ -4,6 +4,9 @@ import { useStableCallback } from "../../../hooks/use-stable-callback";
 import { useStockStore } from "../store/stock-store";
 import { selectAdd, selectReset } from "../store/stock-store-selectors";
 
+/**
+ * See {@link "../../reduce-computation/components/actions"}
+ */
 export function Actions() {
   const add = useStockStore(selectAdd);
   const reset = useStockStore(selectReset);

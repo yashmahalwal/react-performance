@@ -1,4 +1,4 @@
-import { memo, useCallback } from "react";
+import { memo, useCallback, useMemo } from "react";
 import { selectIds, selectStockEvent } from "../store/stock-store-selectors";
 import { useThrottledStore } from "../hooks/use-throttled-store";
 import {
@@ -37,8 +37,15 @@ const components: TableVirtuosoProps<StockEvent["id"], null>["components"] = {
   ),
 };
 
+/**
+ * See {@link "../../optimise-updates/components/stock-table"}
+ */
 export const StockTable = memo(() => {
   const throttledList = useThrottledStore(selectIds, 1000);
+  const throttledReversedList = useMemo(
+    () => [...throttledList].reverse(),
+    [throttledList]
+  );
 
   const renderItem: ItemContent<StockEvent["id"], null> = useCallback(
     (_, id) => {
@@ -65,11 +72,10 @@ export const StockTable = memo(() => {
     <div className="border-2 rounded">
       <TableVirtuoso
         className="!h-96 [&_table]:w-full [&_table]:h-full"
-        data={throttledList}
+        data={throttledReversedList}
         itemContent={renderItem}
         computeItemKey={keyExtractor}
         fixedHeaderContent={tableHeader}
-        followOutput={true}
         components={components}
       />
     </div>

@@ -12,29 +12,35 @@ import { Button, Code } from "@nextui-org/react";
 import { useStableCallback } from "../hooks/use-stable-callback";
 import { Line } from "react-chartjs-2";
 
+/** Defines the structure of profiled rendering events */
 type ProfileEvent = {
   render: number;
   commit: number;
 };
 
+/** Defines the structure of profiled data */
 type ProfiledData = {
   averageRenderDuration: number;
   averageCommitDuation: number;
   count: number;
 };
 
+/** Default profiled data */
 const defaultProfiledData: ProfiledData = {
   averageCommitDuation: 0,
   averageRenderDuration: 0,
   count: 0,
 };
 
+/** Defines the props for a line plot */
 type LinePlotProps = {
   list: ProfiledData[];
   label: string;
   selector: (data: ProfiledData) => number;
   color: string;
 };
+
+/** Renders a line plot */
 function LinePlot({ list, label, selector, color }: LinePlotProps) {
   const config = useMemo(
     () => ({
@@ -60,12 +66,14 @@ function LinePlot({ list, label, selector, color }: LinePlotProps) {
   );
 }
 
+/** Defines the props for the profile plot */
 type ProfilePlotProps = {
   list: ProfiledData[];
 };
 
 const plotOptions = { animation: false } as const;
 
+/** Renders the profiling plots */
 function ProfilePlot({ list }: ProfilePlotProps) {
   const selectRenderDuration = useStableCallback(
     (data: ProfiledData) => data.averageRenderDuration
@@ -104,6 +112,7 @@ function ProfilePlot({ list }: ProfilePlotProps) {
 
 type MemoizedProfilerProps = ProfilerProps;
 
+/** Memoized version of the Profiler component */
 const MemoizedProfiler = memo(
   (props: PropsWithChildren<MemoizedProfilerProps>) => {
     return <Profiler {...props} />;
@@ -111,10 +120,12 @@ const MemoizedProfiler = memo(
 );
 MemoizedProfiler.displayName = "MemoizedProfiler";
 
+/** Props for the PageProfiler component */
 export type PageProfilerProps = {
   durationMs?: number;
 };
 
+/** PageProfiler component to profile rendering performance */
 export function PageProfiler({
   children,
   durationMs = 1000,
@@ -129,7 +140,8 @@ export function PageProfiler({
   const [profiledData, setProfiledData] =
     useState<ProfiledData>(defaultProfiledData);
 
-  const handleReset = useStableCallback(() => {
+  // Reset all refs and state
+    const handleReset = useStableCallback(() => {
     timerRef.current = null;
     renderDurations.current = [];
     profiledDataListRef.current = [];
@@ -137,18 +149,23 @@ export function PageProfiler({
     setProfiledDataState([]);
   });
 
+  // Update profiled data - list of profiled summary overtime
   const handleShowPlot = useStableCallback(() => {
     setProfiledDataState([...profiledDataListRef.current]);
   });
 
+  // Handle profiling
   const handleProfilingButtonClick = useStableCallback(() => {
     if (isProfiling) {
+      // Clear profiling
       timerRef.current && clearInterval(timerRef.current);
       setIsProfiling(false);
       timerRef.current = null;
     } else {
+      // Start profiling
       setIsProfiling(true);
       timerRef.current = setInterval(() => {
+        // Every second, check renderDurations and create profile summary
         const count = renderDurations.current.length;
         const averageRenderDuration = count
           ? renderDurations.current.reduce(
@@ -179,13 +196,16 @@ export function PageProfiler({
 
   useEffect(
     () => () => {
+      // Clear profiling timer on unmount
       timerRef.current && clearInterval(timerRef.current);
     },
     []
   );
 
+  // On render of React profiler
   const onRender: ProfilerProps["onRender"] = useStableCallback(
     (_, reason, render, __, updateStart, updateEnd) => {
+      // Add all update related re-renders to a list of render durations
       if (isProfiling && reason === "update") {
         renderDurations.current.push({
           render,

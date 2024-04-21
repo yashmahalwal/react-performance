@@ -44,7 +44,6 @@ export const useStockStore = create(
 
           store.ids = store.ids.slice(storageLimit / 2, -1);
         }
-``
         const currentSum =
           (store.averagePrices.at(-1)?.value ?? 0) * store.averagePrices.length;
         const newSum =

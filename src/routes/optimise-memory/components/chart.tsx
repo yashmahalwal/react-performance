@@ -6,6 +6,9 @@ const options = {
   animation: false,
 } as const;
 
+/**
+ * See {@link "../../reduce-computation/components/actions"}
+ */
 export function Chart() {
   const averagePrices = useThrottledStore(selectAveragePrices);
 
